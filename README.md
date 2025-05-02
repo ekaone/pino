@@ -1,8 +1,11 @@
+[![WIP](https://img.shields.io/static/v1?label=WIP&message=Work%20In%20Progress&color=yellow&style=for-the-badge)](https://github.com/users/ekaone/projects/6)
+
 # Pino: Interactive Web Piano App
 
 Pino is a modern, interactive web-based piano application built with Next.js, React, and Tailwind CSS. It allows users to play piano notes, record and playback sequences, and customize their sound experience with a variety of controls and UI options.
 
 ---
+
 
 ## Features
 

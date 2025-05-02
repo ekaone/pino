@@ -176,6 +176,15 @@ export default function PianoApp() {
 
   return (
     <>
+      {/* Gradient background behind everything */}
+      <div className="wave-gradient-bg fixed inset-0 w-full h-full -z-10"></div>
+      <Particles
+        className="absolute inset-0 z-0"
+        quantity={100}
+        ease={80}
+        color={color}
+        refresh
+      />
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-[900px] flex flex-col items-center space-y-2.5">
           <div className="bg-[#333] p-4 rounded-md w-full flex flex-col gap-2.5 shadow-md">
@@ -205,19 +214,12 @@ export default function PianoApp() {
             currentOctave={currentOctave}
             handleNotePlay={handleNotePlay}
           />
-          <div className="mt-5 text-center text-gray-600">
+          <div className="mt-5 text-center text-gray-400">
             Click on the keys to play notes. Customize your piano experience
             using the control bar.
           </div>
         </div>
       </div>
-      <Particles
-        className="absolute inset-0 z-0"
-        quantity={100}
-        ease={80}
-        color={color}
-        refresh
-      />
     </>
   );
 }

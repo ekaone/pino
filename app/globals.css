@@ -112,6 +112,14 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.wave-gradient-bg {
+  background:
+    radial-gradient(ellipse at 60% 40%, rgba(120, 120, 255, 0.25) 0%, transparent 75%),
+    radial-gradient(ellipse at 40% 70%, rgba(180, 80, 200, 0.18) 0%, transparent 80%),
+    linear-gradient(120deg, #121a2b 0%, #1a2240 60%, #2c1842 100%);
+  background-blend-mode: lighten, lighten, normal;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
