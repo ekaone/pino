@@ -108,6 +108,7 @@ MIT
 - [Radix UI](https://www.radix-ui.com/)
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
+- [V0](https://v0.dev/)
 
 ---
 
