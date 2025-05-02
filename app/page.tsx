@@ -1,15 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
+import { baseNotes } from "@/data/note-frequencies";
+import PianoKeys from "@/components/piano-keys";
+import ControlBar from "@/components/control-bar";
+import { Particles } from "@/components/magicui/particles";
 
 export default function PianoApp() {
   const [currentOctave, setCurrentOctave] = useState(4);
@@ -21,6 +16,7 @@ export default function PianoApp() {
   const [recordedNotes, setRecordedNotes] = useState<any[]>([]);
   const [currentNote, setCurrentNote] = useState("No Note");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [color] = useState("#ffffff");
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const recordStartTimeRef = useRef(0);
@@ -40,22 +36,6 @@ export default function PianoApp() {
       }
     };
   }, []);
-
-  // Base note frequencies for octave 4
-  const baseNotes = {
-    C: 261.63,
-    "C#": 277.18,
-    D: 293.66,
-    "D#": 311.13,
-    E: 329.63,
-    F: 349.23,
-    "F#": 369.99,
-    G: 392.0,
-    "G#": 415.3,
-    A: 440.0,
-    "A#": 466.16,
-    B: 493.88,
-  };
 
   // Calculate frequency for a note in a specific octave
   const getFrequency = (note: string, octave: number) => {
@@ -194,185 +174,50 @@ export default function PianoApp() {
     }, lastNoteTime * 1000 + 100);
   };
 
-  // Generate piano keys
-  const renderPianoKeys = () => {
-    const whiteNotes = ["C", "D", "E", "F", "G", "A", "B", "C"];
-    const blackNotes = [
-      { note: "C#", position: "left-[45px]" },
-      { note: "D#", position: "left-[111px]" },
-      { note: "F#", position: "left-[243px]" },
-      { note: "G#", position: "left-[309px]" },
-      { note: "A#", position: "left-[375px]" },
-    ];
-
-    return (
-      <div className="relative flex bg-black p-2.5 rounded-b-md shadow-lg">
-        {whiteNotes.map((note, index) => (
-          <div
-            key={`white-${note}-${index}`}
-            className="w-[60px] h-[280px] bg-white border border-gray-300 rounded-b-md mx-0.5 cursor-pointer relative z-10 flex items-end justify-center pb-2.5 text-sm text-gray-500 active:bg-gray-100 active:shadow-inner active:translate-y-0.5"
-            data-note={note}
-            data-next-octave={note === "C" && index === 7 ? "true" : "false"}
-            onMouseDown={() =>
-              handleNotePlay(note, note === "C" && index === 7)
-            }
-          >
-            {showLabels &&
-              (note === "C" && index === 7
-                ? `${note}${currentOctave + 1}`
-                : `${note}${currentOctave}`)}
-          </div>
-        ))}
-
-        {blackNotes.map((item, index) => (
-          <div
-            key={`black-${item.note}-${index}`}
-            className={`w-[40px] h-[160px] bg-black absolute z-20 rounded-b-md cursor-pointer shadow-md flex items-end justify-center pb-2.5 text-xs text-gray-300 active:bg-gray-900 active:shadow-inner active:translate-y-0.5 ${item.position}`}
-            data-note={item.note}
-            onMouseDown={() => handleNotePlay(item.note)}
-          >
-            {showLabels && `${item.note}${currentOctave}`}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-[900px] flex flex-col items-center">
-        <div className="bg-[#333] p-4 rounded-t-md w-full flex flex-col gap-2.5 shadow-md">
-          {/* First row of controls */}
-          <div className="flex flex-wrap justify-between items-center w-full">
-            <div className="flex items-center mr-5 mb-1">
-              <span className="text-white mr-2.5">Octave:</span>
-              <Select
-                value={currentOctave.toString()}
-                onValueChange={(value) =>
-                  setCurrentOctave(Number.parseInt(value))
-                }
-              >
-                <SelectTrigger className="w-[100px] bg-[#555] text-white border-none">
-                  <SelectValue placeholder="Octave 4" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5, 6, 7].map((octave) => (
-                    <SelectItem key={octave} value={octave.toString()}>
-                      Octave {octave}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center mr-5 mb-1">
-              <span className="text-white mr-2.5">Sound Type:</span>
-              <Select value={waveType} onValueChange={setWaveType}>
-                <SelectTrigger className="w-[100px] bg-[#555] text-white border-none">
-                  <SelectValue placeholder="Sine" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="sine">Sine</SelectItem>
-                  <SelectItem value="square">Square</SelectItem>
-                  <SelectItem value="sawtooth">Sawtooth</SelectItem>
-                  <SelectItem value="triangle">Triangle</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center mb-1">
-              <span className="text-white mr-2.5">Note Labels:</span>
-              <button
-                className={`relative inline-flex h-6 w-12 items-center rounded-full ${
-                  showLabels ? "bg-[#4a90e2]" : "bg-[#555]"
-                }`}
-                onClick={() => setShowLabels(!showLabels)}
-              >
-                <span
-                  className={`absolute h-5 w-5 transform rounded-full bg-white transition-transform ${
-                    showLabels ? "translate-x-6" : "translate-x-1"
-                  }`}
-                />
-              </button>
-            </div>
+    <>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-[900px] flex flex-col items-center space-y-2.5">
+          <div className="bg-[#333] p-4 rounded-md w-full flex flex-col gap-2.5 shadow-md">
+            {/* Control bar */}
+            <ControlBar
+              currentOctave={currentOctave}
+              setCurrentOctave={setCurrentOctave}
+              waveType={waveType}
+              setWaveType={setWaveType}
+              showLabels={showLabels}
+              setShowLabels={setShowLabels}
+              volume={volume}
+              setVolume={setVolume}
+              sustain={sustain}
+              setSustain={setSustain}
+              isRecording={isRecording}
+              isPlaying={isPlaying}
+              handleRecordToggle={handleRecordToggle}
+              playRecording={playRecording}
+              recordedNotes={recordedNotes}
+              currentNote={currentNote}
+            />
           </div>
-
-          {/* Second row of controls */}
-          <div className="flex flex-wrap justify-between items-center w-full">
-            <div className="flex items-center mr-5 mb-1">
-              <span className="text-white mr-2.5">Volume:</span>
-              <div className="flex items-center">
-                <Slider
-                  value={[volume]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  className="w-[100px] mx-2.5"
-                  onValueChange={(value) => setVolume(value[0])}
-                />
-                <span className="text-white w-[30px] text-center">
-                  {volume}%
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center mr-5 mb-1">
-              <span className="text-white mr-2.5">Sustain:</span>
-              <div className="flex items-center">
-                <Slider
-                  value={[sustain]}
-                  min={10}
-                  max={200}
-                  step={1}
-                  className="w-[100px] mx-2.5"
-                  onValueChange={(value) => setSustain(value[0])}
-                />
-                <span className="text-white w-[30px] text-center">
-                  {(sustain / 100).toFixed(1)}s
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center mb-1">
-              <Button
-                onClick={handleRecordToggle}
-                className={`${
-                  isRecording ? "bg-[#e74c3c]" : "bg-[#4a90e2]"
-                } text-white font-bold`}
-              >
-                {isRecording ? "Stop" : "Record"}
-              </Button>
-              <Button
-                onClick={playRecording}
-                disabled={
-                  recordedNotes.length === 0 || isPlaying || isRecording
-                }
-                className="ml-2.5 bg-[#4a90e2] text-white font-bold disabled:opacity-50"
-              >
-                Play
-              </Button>
-            </div>
-          </div>
-
-          {/* Status display */}
-          <div className="flex flex-wrap justify-between items-center w-full">
-            <div className="bg-[#4a90e2] text-white px-3 py-2 rounded font-bold">
-              Octave {currentOctave}
-            </div>
-            <div className="bg-[#4a90e2] text-white px-3 py-2 rounded font-bold">
-              {currentNote}
-            </div>
+          {/* Piano keys */}
+          <PianoKeys
+            showLabels={showLabels}
+            currentOctave={currentOctave}
+            handleNotePlay={handleNotePlay}
+          />
+          <div className="mt-5 text-center text-gray-600">
+            Click on the keys to play notes. Customize your piano experience
+            using the control bar.
           </div>
         </div>
-
-        {/* Piano keys */}
-        {renderPianoKeys()}
       </div>
-
-      <div className="mt-5 text-center text-gray-600">
-        Click on the keys to play notes. Customize your piano experience using
-        the control bar.
-      </div>
-    </div>
+      <Particles
+        className="absolute inset-0 z-0"
+        quantity={100}
+        ease={80}
+        color={color}
+        refresh
+      />
+    </>
   );
 }
