@@ -187,7 +187,7 @@ export default function PianoApp() {
       />
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-[900px] flex flex-col items-center space-y-2.5">
-          <div className="bg-[#333] p-4 rounded-md w-full flex flex-col gap-2.5 shadow-md">
+          <div className="p-4 rounded-md w-full flex flex-col gap-2.5">
             {/* Control bar */}
             <ControlBar
               currentOctave={currentOctave}
